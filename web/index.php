@@ -17,9 +17,9 @@
 
             include_once "vendor/autoload.php";
             $Parsedown = new Parsedown();
-            $contents = file_get_contents("contents/".basename($_SERVER['REQUEST_URI'], '?' . $_SERVER['QUERY_STRING']).".md");
+            $contents = @file_get_contents("contents/".basename($_SERVER['REQUEST_URI'], '?' . $_SERVER['QUERY_STRING']).".md");
             if ($contents == "")
-                $contents = file_get_contents("contents/index.md");
+                $contents = @file_get_contents("contents/index.md");
             echo $Parsedown->text($contents);
 
             ?>
