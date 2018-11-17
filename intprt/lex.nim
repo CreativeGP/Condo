@@ -1,9 +1,21 @@
 import sequtils
+import sets
+
+
+# Type sould be a set of entities which it abstructs.
+# However we use strings denoting sets becuase the size of set
+# may be infinity (e.g. int)
+type
+  NaturalType = string
+  Type = HashSet[NaturalType]
+  TypeAnnotation = seq[Type]
+
 
 const Specials = "!#$%&()-^\\@[;:],./=~|`{+*}<>?"
 const Escapes = "\"'"
 const Split = " \t\n"
 const EscapeModePadding = 100
+    
 
 proc ctos(ch : char) : string =
   var res = newString(1)
@@ -40,7 +52,6 @@ proc tokenize*(code : string) : seq[string] =
       var escape_chr = Escapes[mode - EscapeModePadding]
       try:
         if (code[i-2] == '\\' or code[i-1] != '\\') and code[i] == escape_chr:
-          echo escape_chr
           tokens.addToken little
           tokens.add(escape_chr.ctos)
           mode = 0
