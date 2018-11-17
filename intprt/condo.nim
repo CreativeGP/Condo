@@ -1,4 +1,4 @@
-import lex
+import lex, syntac
 
 var file : File = open("test/ex1.co", fmRead)
 var source = file.readAll.string

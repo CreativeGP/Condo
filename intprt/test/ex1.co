@@ -1,25 +1,27 @@
-set1 = {1, 2, 3};
-set2 = {a: 1, b: 2, c: 3};
-
-chr1 = 'a';
-chr2 = '\t';
-chr3 = '\\';
-
-str1 = "hello this is stirng!";
-str2 = "{a: 1, b: 2, c: 3};\\\n\t";
-
-list1 = [1, 2, 3];
-
-if (b)
 (
-    let 
-    let b 5
-);
+    set1 = {1, 2, 3};
+    set2 = {a: 1, b: 2, c: 3};
 
-rep: int- = (|i proc|
-    proc i;
-    rep i-1 proc;
-);
+    chr1 = 'a';
+    chr2 = '\t';
+    chr3 = '\\';
 
-let sum 3;
-rep 3 (|i| sum += i);
+    str1 = "hello this is stirng!";
+    str2 = "{a: 1, b: 2, c: 3};\\\n\t";
+
+    list1 = [1, 2, 3];
+
+    if (b)
+    (
+        let 
+        let b 5
+    );
+
+    rep: int- = (|i proc|
+             proc i;
+             rep i-1 proc;
+    );
+
+    let sum 3;
+    rep 3 (|i| sum += i);
+);
