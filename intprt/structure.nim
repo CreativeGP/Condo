@@ -14,10 +14,10 @@ type
   
   TypeAnnotation* = seq[Type]
 
-  Entity = object of RootObj
+  Entity* = ref object of RootObj
 
   # TODO: Token type. Utilize pointers.
-  Token* = object# of Entity
+  Token* = ref object of Entity
     val*: string
     ty*: TokenType
   
@@ -35,5 +35,11 @@ type
     body*: seq[Stmt]
     args*: seq[Token]
 
-    
+proc newFn*(): Fn =
+  var fn: Fn
+  new fn
+  fn.ty = @[]
+  fn.body = @[]
+  fn.args = @[]
+  return fn
 # var tttable: Table[ptr Token, TokenType]

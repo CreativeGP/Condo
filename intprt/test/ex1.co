@@ -18,8 +18,8 @@
     );
 
     rep: int- = (|i proc|
-             proc i;
-             rep i-1 proc;
+        proc i;
+        rep i-1 proc;
     );
 
     let sum 3;

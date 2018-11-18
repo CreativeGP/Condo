@@ -2,45 +2,45 @@ import iter, tables, structure
 
 proc statement(tokens : var iter[Token]) : Stmt
 proc function(tokens : var iter[Token]) : Fn
-proc parse*(tokens : var seq[Token]) : Stmt
+proc parse*(tokens : var seq[Token]) : Fn
 
+  
 proc argument(tokens: var iter[Token]): seq[Token] =
   var args: seq[Token] = @[]
-  if *tokens == "|":
+  if (*tokens).val == "|":
     # parse arguments
     inc tokens # pass |
     for t in tokens.itr:
+      if (*tokens).val == "|": break
       args.add *tokens
-      inc tokens
-      if *tokens == "|": break
     inc tokens
     return args
-
-proc function(tokens: var iter[Token]): Fn =
-  var fn: Fn
-  new fn
-  
-  inc tokens # pass (
-  fn.args = argument(tokens)
-  for t in tokens.itr:
-    fn.body.add statement(tokens)
-    case *tokens:
-      of ")": return fn
-      else: discard
 
 
 proc statement(tokens: var iter[Token]): Stmt =
   var stmt: Stmt = @[]
   for t in tokens.itr:
-    case *tokens:
+    case t.val:
       of ";",")":
-        inc tokens
         return stmt
       of "(":
-        stmt.add function(tokens)
+        stmt.add Entity(function(tokens))
+        continue
       else: discard
-    stmt.add *tokens
+    stmt.add Entity(t)
   return stmt
+
+
+proc function(tokens: var iter[Token]): Fn =
+  var fn = newFn()
+  
+  inc tokens # pass (
+  fn.args = argument(tokens)
+  for t in tokens.itr:
+    fn.body.add statement(tokens)
+    if (*tokens).val == ")": return fn
+
+  echo "[ERROR] Funtion is not closed."
 
 
 proc parse*(tokens: var seq[Token]): Fn =

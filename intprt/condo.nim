@@ -1,7 +1,12 @@
-import lex, structure
+import sequtils
+import lex, syntac, structure
 
-var file : File = open("test/ex1.co", fmRead)
+var file: File = open("test/ex1.co", fmRead)
 var source = file.readAll.string
 var tokens: seq[Token] = tokenize(source)
-#var root: Fn = parse(tokens)
-echo tokens
+
+echo tokens.map(proc(x:Token):string = return x.val)
+
+var root: Fn = parse(tokens)
+for e in root.body:
+  echo e.repr
