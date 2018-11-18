@@ -9,8 +9,8 @@ proc Iter*[T](list : ptr seq[T], idx : int) : iter[T] =
   res.idx = idx
   return res
 
-proc `*`*[T](it : iter[T]) : T =
-  return it.adr[it.idx]
+template `*`*[T](it : iter[T]) : T =
+  it.adr[it.idx]
 
 proc inc*[T](it : var iter[T]) =
   inc(it.idx)
