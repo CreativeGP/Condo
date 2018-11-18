@@ -1,4 +1,5 @@
-import sequtils
+import strutils, sequtils
+import structure
 
 const Specials = "!#$%&()-^\\@[;:],./=~|`{+*}<>?"
 const Escapes = "\"'"
@@ -10,9 +11,18 @@ proc ctos(ch : char) : string =
   res[0] = ch
   return res
 
-proc addToken(tokens : var seq[Token], value : string) =
+
+proc addToken(tokens: var seq[Token], value: string, tt: TokenType = ttNone) =
   if value == "": return
-  tokens.add value
+  var tt = tt
+
+  if tt == ttNone:
+    if Specials.contains(value) or Escapes.contains(value): tt = ttSpecial
+    elif isDigit(value[0]): tt = ttNumber
+    else: tt = ttName
+    
+  tokens.add Token(val: value, ty: tt)
+
 
 proc tokenize*(code : string) : seq[Token] =
   var tokens : seq[Token] = @[]
@@ -28,20 +38,20 @@ proc tokenize*(code : string) : seq[Token] =
 
       if Escapes.contains(code[i]):
         mode = EscapeModePadding + (Escapes.find code[i])
-        tokens.addToken(code[i].ctos)
+        tokens.addToken code[i].ctos
         continue
 
       if Specials.contains(code[i]):
         tokens.addToken little
+        tokens.addToken code[i].ctos
         little = ""
-        tokens.add(code[i].ctos)
       else: little.add code[i]
     else:
       var escape_chr = Escapes[mode - EscapeModePadding]
       try:
         if (code[i-2] == '\\' or code[i-1] != '\\') and code[i] == escape_chr:
-          tokens.addToken little
-          tokens.add(escape_chr.ctos)
+          tokens.addToken little,ttString
+          tokens.addToken escape_chr.ctos
           mode = 0
           little = ""
         else: little.add code[i]
