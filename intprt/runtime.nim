@@ -1,7 +1,7 @@
 import structure
 import tables
 
-var ident_table: Table[string, Fn]
+var ident_table = initTable[string, Fn]()
 
 
 proc fn_let(name: string, value: Fn) =
@@ -9,12 +9,14 @@ proc fn_let(name: string, value: Fn) =
 
 
 proc run(stmt: Stmt) =
-  const fn_name = Token(stmt[0]).val
+  if stmt.len == 0: return
+  
+  var fn_name = unwrapToken(stmt[0]).val
   case fn_name:
     of "let":
-      const name = Token(stmt[1]).val
+      var name = unwrapToken(stmt[1]).val
       var fn = newFn()
-      fn.body = stmt[2 .. <stmt.len]
+      fn.body.add Stmt(stmt[2 .. <stmt.len])
       fn_let(name, fn)
   echo ident_table
 
