@@ -8,7 +8,5 @@ var tokens: seq[Token] = tokenize(source)
 echo tokens.map(proc(x:Token):string = return x.val)
 
 var root: Fn = parse(tokens)
-for e in root.body:
-  echo e.repr
-
+echo root
 # call(root)

@@ -37,6 +37,13 @@ type
     body*: seq[Stmt]
     args*: seq[Token]
 
+proc checkStmt*(item: Base): string
+proc `$`*(stmt: Stmt): string
+proc `$`*(fn: Fn): string
+proc add*(stmt: var Stmt, token: Token)
+proc add*(stmt: var Stmt, fn: Fn)
+
+
 proc add*(stmt: var Stmt, token: Token) =
   stmt.add(StmtItem[Token](data: token))
 proc add*(stmt: var Stmt, fn: Fn) =
@@ -44,11 +51,40 @@ proc add*(stmt: var Stmt, fn: Fn) =
 
 # NOTE: Yes, this is a little redundant.
 # I tried generalization, however hitted an issue(nim-lang/Nim #7469).
-# proc unwrapStmt[T](item: StmtItem[T]): T =
+# proc unwrapStmt(item: Base): typed =
 #   try:
-#     return UItem[Token](item).data
+#     return StmtItem[Token](item).data
 #   except ObjectConversionError:
 #     return StmtItem[Fn](item).data
+
+proc checkStmt*(item: Base): string =
+  try:
+    var tmp = StmtItem[Token](item).data
+    return "Token"
+  except ObjectConversionError:
+    return "Fn"
+
+    
+proc `$`*(stmt: Stmt): string =
+  result = ""
+  for item in stmt:
+    case checkStmt(item):
+      of "Token":
+        result &= StmtItem[Token](item).data.val & " "
+      of "Fn":
+        result &= `$` StmtItem[Fn](item).data
+      else:
+        echo "[ERROR] Invalid type in statement"
+  result &= "\n"
+
+proc `$`*(fn: Fn): string =
+  result = "Fn["
+  for t in fn.args:
+    result &= " " & t.val
+  result &= "] (\n"
+  for stmt in fn.body:
+    result &= `$` stmt
+  result &= ")\n\n"
 
   
 proc newFn*(): Fn =
