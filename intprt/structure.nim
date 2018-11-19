@@ -57,22 +57,27 @@ proc add*(stmt: var Stmt, fn: Fn) =
 #   except ObjectConversionError:
 #     return StmtItem[Fn](item).data
 
+# TODO: Generalization?
+proc unwrapToken*(item: Base): Token =
+  return StmtItem[Token](item).data
+proc unwrapFn*(item: Base): Fn =
+  return StmtItem[Fn](item).data
+
 proc checkStmt*(item: Base): string =
   try:
     var tmp = StmtItem[Token](item).data
     return "Token"
   except ObjectConversionError:
     return "Fn"
-
     
 proc `$`*(stmt: Stmt): string =
   result = ""
   for item in stmt:
     case checkStmt(item):
       of "Token":
-        result &= StmtItem[Token](item).data.val & " "
+        result &= unwrapToken(item).val & " "
       of "Fn":
-        result &= `$` StmtItem[Fn](item).data
+        result &= `$` unwrapFn(item)
       else:
         echo "[ERROR] Invalid type in statement"
   result &= "\n"
