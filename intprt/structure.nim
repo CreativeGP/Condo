@@ -14,10 +14,12 @@ type
   
   TypeAnnotation* = seq[Type]
 
-  Entity* = ref object of RootObj
+  Base = ref object of RootObj
+  StmtItem[T] = ref object of Base
+    data: T
 
   # TODO: Token type. Utilize pointers.
-  Token* = ref object of Entity
+  Token* = ref object
     val*: string
     ty*: TokenType
   
@@ -28,13 +30,27 @@ type
     ttNumber
     ttString
   
-  Stmt* = seq[Entity]
+  Stmt* = seq[Base]
   
-  Fn* = ref object of Entity
+  Fn* = ref object
     ty*: TypeAnnotation
     body*: seq[Stmt]
     args*: seq[Token]
 
+proc add*(stmt: var Stmt, token: Token) =
+  stmt.add(StmtItem[Token](data: token))
+proc add*(stmt: var Stmt, fn: Fn) =
+  stmt.add(StmtItem[Fn](data: fn))
+
+# NOTE: Yes, this is a little redundant.
+# I tried generalization, however hitted an issue(nim-lang/Nim #7469).
+# proc unwrapStmt[T](item: StmtItem[T]): T =
+#   try:
+#     return UItem[Token](item).data
+#   except ObjectConversionError:
+#     return StmtItem[Fn](item).data
+
+  
 proc newFn*(): Fn =
   var fn: Fn
   new fn

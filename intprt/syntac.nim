@@ -24,10 +24,10 @@ proc statement(tokens: var iter[Token]): Stmt =
       of ";",")":
         return stmt
       of "(":
-        stmt.add Entity(function(tokens))
+        stmt.add function(tokens)
         continue
       else: discard
-    stmt.add Entity(t)
+    stmt.add t
   return stmt
 
 

@@ -1,5 +1,5 @@
 import sequtils
-import lex, syntac, structure
+import lex, syntac, structure#, runtime
 
 var file: File = open("test/ex1.co", fmRead)
 var source = file.readAll.string
@@ -10,3 +10,5 @@ echo tokens.map(proc(x:Token):string = return x.val)
 var root: Fn = parse(tokens)
 for e in root.body:
   echo e.repr
+
+# call(root)
