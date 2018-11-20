@@ -62,6 +62,10 @@ proc unwrapToken*(item: Base): Token =
   return StmtItem[Token](item).data
 proc unwrapFn*(item: Base): Fn =
   return StmtItem[Fn](item).data
+proc wrapToken*(token: Token): Base =
+  return StmtItem[Token](data:token)
+proc wrapFn*(fn: Fn): Base =
+  return StmtItem[Fn](data:fn)
 
 proc checkStmt*(item: Base): string =
   try:
