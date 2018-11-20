@@ -12,3 +12,5 @@ var root: Fn = parse(tokens)
 # echo root
 
 call(root)
+
+debug()
