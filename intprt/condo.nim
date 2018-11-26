@@ -10,6 +10,6 @@ var root: Fn = parse(tokens)
 
 echo root
 
-# call(root)
+discard go(root, @[])
 
-# debug()
+debug()
