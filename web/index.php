@@ -11,6 +11,9 @@
 
         
         <style>
+         h1, h2, h3 {
+             margin-top: 1em;
+         }
          blockquote {
              background: none;
              border-left: 3px solid #777;
