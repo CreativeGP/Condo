@@ -8,6 +8,29 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/default.min.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
         <script>hljs.initHighlightingOnLoad();</script>
+
+        
+        <style>
+         blockquote {
+             background: none;
+             border-left: 3px solid #777;
+             color: #777;
+             margin: 20px 0;
+             padding: 0 0 0 10px;
+         }
+         table {
+             border-width: 1px 0 0 1px;
+             border-color: #bbb;
+             border-style: solid;
+         }
+
+         table td, table th {
+             border-width: 0 1px 1px 0;
+             border-color: #bbb;
+             border-style: solid;
+             padding: 10px;
+         }
+        </style>
     </head>
     <body>
         <div class="container">
