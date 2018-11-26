@@ -21,7 +21,10 @@ proc statement(tokens: var iter[Token]): Stmt =
   var stmt: Stmt = @[]
   for t in tokens.itr:
     case t.val:
-      of ";",")":
+      of ")":
+        return stmt
+      of ";":
+        stmt.add Token(val: ";", ty: ttSpecial)
         return stmt
       of "(":
         stmt.add function(tokens)
