@@ -1,26 +1,29 @@
 import structure
 import strutils, tables, options
 
-proc eval(stmt: Stmt): Option[seq[Base]]
+proc eval(stmt: Stmt, superfn: Fn): Option[seq[Base]]
 proc go*(fn: Fn, args: seq[Base]): Option[seq[Base]]
+proc resolveStmt(stmt: var Stmt)
+proc resolveName(s: string): Fn
+
+var fnstack: seq[Fn] = @[]
+
+proc debug*(fn: Fn) =
+  echo fn.binds
 
 
-var bind_table = initTable[string, Fn]()
+# Name -> Fn
+proc resolveName(s: string): Fn =
+  for fn in fnstack:
+    return fn.binds[s]
 
-proc fn_let(name: string, value: Fn) =
-  bind_table.add(name, value)
-
-proc debug*() =
-  echo bind_table
-
-
-# Expand according to the binding table
-proc refexpand(stmt: var Stmt) =
+# Iterate through statement expanding tokens according to the binding table
+proc resolveStmt(stmt: var Stmt) =
   for i in 0..<stmt.len:
     if stmt[i].checkStmt == "Token":
       var tkn = unwrapToken(stmt[i])
       if tkn.ty == ttName:
-        stmt[i] = wrapFn(bind_table[tkn.val])
+        stmt[i] = wrapFn(resolveName(tkn.val))
 
 
 # proc run(stmt: Stmt) =
@@ -46,38 +49,48 @@ proc refexpand(stmt: var Stmt) =
 #           stmt.delete(i, 1)
 #           stmt.delete(i, args[
 
-proc eval(stmt: Stmt): Option[seq[Base]] =
+# Eval a statement
+proc eval(stmt: Stmt, superfn: Fn): Option[seq[Base]] =
   if stmt.len == 0: return
   
   let semicolon = stmt[^1].checkStmt == "Token" and unwrapToken(stmt[^1]).val == ";"
+  let stmt_end_idx = (if semicolon: stmt.len-2 else: stmt.len-1)
   var fn: Fn
   case stmt[0].checkStmt:
     of "Token":
       var tkn = unwrapToken(stmt[0])
       # TODO Diagnostics
 
+      # Build-in functions (debug)
       if tkn.val == "let":
         var name = unwrapToken(stmt[1]).val
         var fn = newFn()
-        var new_stmt = Stmt(stmt[2 .. <stmt.len])
-        refexpand new_stmt
+        var new_stmt = Stmt(stmt[2 .. stmt_end_idx])
+        resolveStmt new_stmt
         fn.body.add new_stmt
-        fn_let(name, fn)
+        superfn.binds.add(name, fn)
+        return
+      elif tkn.val == "echo":
+        echo Stmt(stmt[1 .. stmt_end_idx])
         return
         
-      fn = bind_table[tkn.val]
+      fn = resolveName(tkn.val)
     of "Fn":
       fn = unwrapFn(stmt[0])
 
-  var res = go(fn, stmt[1 .. <(if semicolon: stmt.len-1 else: stmt.len)])
+  var res = go(fn, stmt[1 .. stmt_end_idx])
   return if semicolon: none(seq[Base]) else: res
+
 
 # Run through a function and return a statement
 # (NOTE All "value" in this language can at least be represented as a stmt <- redundant?)
 proc go*(fn: Fn, args: seq[Base]): Option[seq[Base]] =
   var res: Option[seq[Base]] = none(seq[Base])
+  fnstack.add fn
   # TODO Arguments local binding
   for stmt in fn.body:
-    var e = eval(stmt)
+    var e = eval(stmt, fn)
     if e.isSome: res = e
+
+  fnstack.delete(fnstack.len-1)
   return res

@@ -1,4 +1,4 @@
-import sets
+import sets, tables
 
 # Type sould be a set of entities which it abstructs.
 # However I use strings denoting sets becuase the size of set
@@ -36,6 +36,7 @@ type
     ty*: TypeAnnotation
     body*: seq[Stmt]
     args*: seq[Token]
+    binds*: Table[string, Fn]
 
 proc checkStmt*(item: Base): string
 proc `$`*(stmt: Stmt): string
@@ -102,5 +103,6 @@ proc newFn*(): Fn =
   fn.ty = @[]
   fn.body = @[]
   fn.args = @[]
+  fn.binds = initTable[string, Fn]()
   return fn
 # var tttable: Table[ptr Token, TokenType]

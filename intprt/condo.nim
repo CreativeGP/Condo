@@ -12,4 +12,4 @@ echo root
 
 discard go(root, @[])
 
-debug()
+debug(root)
