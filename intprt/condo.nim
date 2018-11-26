@@ -6,11 +6,10 @@ var source = file.readAll.string
 var tokens: seq[Token] = tokenize(source)
 
 echo tokens.map(proc(x:Token):string = return x.val)
-
 var root: Fn = parse(tokens)
 
-# echo root
+echo root
 
-call(root)
+# call(root)
 
-debug()
+# debug()

@@ -14,7 +14,7 @@ type
   
   TypeAnnotation* = seq[Type]
 
-  Base = ref object of RootObj
+  Base* = ref object of RootObj
   StmtItem[T] = ref object of Base
     data: T
 
