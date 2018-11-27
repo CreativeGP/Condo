@@ -15,7 +15,10 @@ proc debug*(fn: Fn) =
 # Name -> Fn
 proc resolveName(s: string): Fn =
   for fn in fnstack:
-    return fn.binds[s]
+    try:
+      return fn.binds[s]
+    except KeyError:
+      discard
 
 # Iterate through statement expanding tokens according to the binding table
 proc resolveStmt(stmt: var Stmt) =
@@ -64,14 +67,12 @@ proc eval(stmt: Stmt, superfn: Fn): Option[seq[Base]] =
       # Build-in functions (debug)
       if tkn.val == "let":
         var name = unwrapToken(stmt[1]).val
-        var fn = newFn()
-        var new_stmt = Stmt(stmt[2 .. stmt_end_idx])
-        resolveStmt new_stmt
-        fn.body.add new_stmt
-        superfn.binds.add(name, fn)
+        superfn.binds.add(name, unwrapFn(stmt[2]))
         return
       elif tkn.val == "echo":
-        echo Stmt(stmt[1 .. stmt_end_idx])
+        var toshow = Stmt(stmt[1 .. stmt_end_idx])
+        resolveStmt toshow
+        echo toshow
         return
         
       fn = resolveName(tkn.val)
@@ -86,11 +87,28 @@ proc eval(stmt: Stmt, superfn: Fn): Option[seq[Base]] =
 # (NOTE All "value" in this language can at least be represented as a stmt <- redundant?)
 proc go*(fn: Fn, args: seq[Base]): Option[seq[Base]] =
   var res: Option[seq[Base]] = none(seq[Base])
+
+  # Push into function stack
   fnstack.add fn
-  # TODO Arguments local binding
+  
+  # Arguments local binding
+  for i in 0 .. <args.len:
+    let argname = fn.args[i].val
+    if args[i].checkStmt == "Fn":
+      fn.binds.add(argname, unwrapFn(args[i]))
+    else: # Token
+      let tkn = unwrapToken(args[i])
+      if tkn.ty == ttName:
+        fn.binds.add(argname, resolveName(tkn.val))
+      else:
+        let tmpfn = newFn()
+        tmpfn.body.add Stmt(@[wrapToken(tkn)])
+        fn.binds.add(argname, tmpfn)
+
   for stmt in fn.body:
     var e = eval(stmt, fn)
     if e.isSome: res = e
 
+  fn.binds.clear()
   fnstack.delete(fnstack.len-1)
   return res
