@@ -70,8 +70,15 @@ proc eval(stmt: Stmt, superfn: Fn): Option[seq[Base]] =
       
       # Build-in functions (debug)
       if tkn.val == "let":
-        var name = unwrapToken(stmt[1]).val
-        superfn.binds.add(name, unwrapFn(stmt[2]))
+        let name = unwrapToken(stmt[1]).val
+        if stmt[2].checkStmt == "Fn":
+          superfn.binds.add(name, unwrapFn(stmt[2]))
+        else:
+          let newfn = newFn()
+          var newstmt = Stmt(stmt[2 .. <stmt.len-1])
+          resolveStmt newstmt
+          newfn.body.add newstmt
+          superfn.binds.add(name, newfn)
         return
       elif tkn.val == "echo":
         var toshow = Stmt(stmt[1 .. stmt_end_idx])
