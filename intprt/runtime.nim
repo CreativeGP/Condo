@@ -75,7 +75,7 @@ proc eval(stmt: Stmt, superfn: Fn): Option[seq[Base]] =
           superfn.binds.add(name, unwrapFn(stmt[2]))
         else:
           let newfn = newFn()
-          var newstmt = Stmt(stmt[2 .. <stmt.len-1])
+          var newstmt = Stmt(stmt[2 .. stmt_end_idx])
           resolveStmt newstmt
           newfn.body.add newstmt
           superfn.binds.add(name, newfn)
