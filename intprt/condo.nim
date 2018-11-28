@@ -1,5 +1,5 @@
 import sequtils
-import lex, syntac, structure, runtime
+import lex, syntac, structure, runtime, options
 
 var file: File = open("test/ex2.co", fmRead)
 var source = file.readAll.string
@@ -10,6 +10,6 @@ var root: Fn = parse(tokens)
 
 echo root
 
-discard go(root, @[])
+echo get(go(root, @[]))
 
 debug(root)

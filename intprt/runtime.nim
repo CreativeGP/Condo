@@ -55,7 +55,7 @@ proc resolveStmt(stmt: var Stmt) =
 # Eval a statement
 proc eval(stmt: Stmt, superfn: Fn): Option[seq[Base]] =
   if stmt.len == 0: return
-  
+
   let semicolon = stmt[^1].checkStmt == "Token" and unwrapToken(stmt[^1]).val == ";"
   let stmt_end_idx = (if semicolon: stmt.len-2 else: stmt.len-1)
   var fn: Fn
@@ -64,6 +64,10 @@ proc eval(stmt: Stmt, superfn: Fn): Option[seq[Base]] =
       var tkn = unwrapToken(stmt[0])
       # TODO Diagnostics
 
+      # literal
+      if tkn.ty == ttNumber or tkn.ty == ttString:
+        return if semicolon: none(seq[Base]) else: some(@[stmt[0]])
+      
       # Build-in functions (debug)
       if tkn.val == "let":
         var name = unwrapToken(stmt[1]).val
