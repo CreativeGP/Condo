@@ -38,7 +38,7 @@ proc tokenize*(code : string) : seq[Token] =
 
       if Escapes.contains(code[i]):
         mode = EscapeModePadding + (Escapes.find code[i])
-        tokens.addToken code[i].ctos
+#        tokens.addToken code[i].ctos
         continue
 
       if Specials.contains(code[i]):
@@ -51,7 +51,7 @@ proc tokenize*(code : string) : seq[Token] =
       try:
         if (code[i-2] == '\\' or code[i-1] != '\\') and code[i] == escape_chr:
           tokens.addToken little,ttString
-          tokens.addToken escape_chr.ctos
+#          tokens.addToken escape_chr.ctos
           mode = 0
           little = ""
         else: little.add code[i]
