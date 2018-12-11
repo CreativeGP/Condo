@@ -44,6 +44,8 @@ proc `$`*(fn: Fn): string
 proc add*(stmt: var Stmt, token: Token)
 proc add*(stmt: var Stmt, fn: Fn)
 
+#proc TypeAnnotation(
+
 
 proc add*(stmt: var Stmt, token: Token) =
   stmt.add(StmtItem[Token](data: token))

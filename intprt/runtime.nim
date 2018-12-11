@@ -71,14 +71,11 @@ proc eval(stmt: Stmt, superfn: Fn): Option[seq[Base]] =
       # Build-in functions (debug)
       if tkn.val == "let":
         let name = unwrapToken(stmt[1]).val
-        if stmt[2].checkStmt == "Fn":
+        let ty = unwrapToken(stmt[1]).val
+        if stmt[^1].checkStmt == "Fn":
           superfn.binds.add(name, unwrapFn(stmt[2]))
         else:
-          let newfn = newFn()
-          var newstmt = Stmt(stmt[2 .. stmt_end_idx])
-          resolveStmt newstmt
-          newfn.body.add newstmt
-          superfn.binds.add(name, newfn)
+          echo "[ERROR] Invalid argument (let)"
         return
       elif tkn.val == "echo":
         var toshow = Stmt(stmt[1 .. stmt_end_idx])
