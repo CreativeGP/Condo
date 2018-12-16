@@ -98,7 +98,7 @@ proc go*(fn: Fn, args: seq[Base]): Option[seq[Base]] =
 
   # Push into function stack
   fnstack.add fn
-  
+
   # Arguments local binding
   for i in 0 .. <args.len:
     let argname = fn.args[i].val
