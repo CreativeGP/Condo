@@ -7,6 +7,7 @@ proc resolveStmt(stmt: var Stmt)
 proc resolveName(s: string): Fn
 
 var fnstack: seq[Fn] = @[]
+var typemap = initTable[string, Type]()
 
 proc debug*(fn: Fn) =
   echo fn.binds

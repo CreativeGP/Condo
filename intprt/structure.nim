@@ -44,7 +44,11 @@ proc `$`*(fn: Fn): string
 proc add*(stmt: var Stmt, token: Token)
 proc add*(stmt: var Stmt, fn: Fn)
 
-#proc TypeAnnotation(
+proc parseTypeAnnotation(stmt: Stmt): TypeAnnotation =
+  var res = @[]
+  for i in 0..<stmt.len:
+    if unwrapToken(stmt[i]).val == "-":
+    res.add(stmt[i])
 
 
 proc add*(stmt: var Stmt, token: Token) =
