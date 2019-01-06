@@ -1,0 +1,26 @@
+(
+    import ratio as /
+
+    concept =>> (|a f| (|a| f a))
+
+    # router
+    get "/" index.new
+    get "/user/%d" i =>> user.new
+
+    index = {
+        new -> (
+            <div>
+                <p>Welcome to my website.</p>
+            </div>
+        )
+    }
+
+    user = {
+        new -> (|name|
+            <div>
+                <p>Your name is <-name-></p>
+            </div>
+        )
+    }
+
+)

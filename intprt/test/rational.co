@@ -1,0 +1,34 @@
+# rational implementation in Condo
+# 01/03/2019
+
+(
+    type Rational (type? Map)--(has numer denom)
+
+    rational: Int-Int-Rational = (|n d| 
+        require (d != 0)
+        g = gcd n m
+        { numer -> n/g, denom -> d/g }
+    )
+    
+    +: Rational-Rational-Rational = (|x y|
+        rational (x.numer * y.denom + y.numer * x.denom) (x.denom * y.denom)
+    )
+
+    *: Rational-Rational-Rational = (|x y|
+        rational (x.numer * y.numer) (x.denom * y.denom)
+    )
+
+    toString: Rational-String = (|r| r.numer + "/" + r.denom)
+)
+
+# test 
+
+(
+    a = rational 1 2
+    b = rational 2 3
+    print "a is " + a
+    print "b is " + b
+    print "a + b is " + (a + b)
+    print "ab is " + (a * b)
+    ()
+)
